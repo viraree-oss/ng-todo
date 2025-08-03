@@ -18,7 +18,7 @@ RUN npm run build --prod
 
 # Use Nginx to serve the built Angular app
 FROM nginx:alpine
-COPY --from=0 /app/dist /usr/share/nginx/html
+COPY --from=0 /app/dist/survey-lists /usr/share/nginx/html
 
 # Expose port for Angular app
 EXPOSE 80
