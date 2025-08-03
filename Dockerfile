@@ -1,13 +1,27 @@
-# Stage 1: Build the Angular application
-FROM node:alpine AS build
-WORKDIR /app
-COPY package*.json ./
-RUN npm install
-COPY . .
-RUN npm run build -- --configuration production
+# Use the official Node.js image for building Angular
+FROM node:16
 
-# Stage 2: Serve the Angular application with Nginx
+# Set the working directory inside the container
+WORKDIR /app
+
+# Copy package.json and package-lock.json for dependency installation
+COPY package*.json ./
+
+# Install Angular dependencies
+RUN npm install
+
+# Copy the application code into the container
+COPY . .
+
+# Build the Angular app
+RUN npm run build --prod
+
+# Use Nginx to serve the built Angular app
 FROM nginx:alpine
-COPY --from=build /app/dist/survey-lists /usr/share/nginx/html
+COPY --from=0 /app/dist /usr/share/nginx/html
+
+# Expose port for Angular app
 EXPOSE 80
+
+# Start the Nginx server
 CMD ["nginx", "-g", "daemon off;"]
